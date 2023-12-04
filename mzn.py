@@ -22,18 +22,18 @@ def generate_variations(num_variations,min_nodes, max_nodes):
         #make sure there are no self loops
         np.fill_diagonal(edges, 0)
 
-        for x in range(num//2):
+        for x in range(1,num//2):
             initial_fire_nodes = random.sample(range(1, num), x)
-            for y in range(num//2):
-                budget = random.randint(1, num)
+            for y in range(1,(num - x)//2):
+                budget = y
                 variations.append((num, edges, initial_fire_nodes, budget))
     return variations
 
 
 def main():
-    num_variations = 2
+    num_variations = 50
     min_nodes = 5
-    max_nodes = 8
+    max_nodes = 100
 
     variations = generate_variations(num_variations, min_nodes, max_nodes)
     results = []
@@ -51,6 +51,12 @@ def main():
 
     # Convert results to DataFrame and plot
     df = pd.DataFrame(results, columns=['Solver', 'Variation', 'Time'])
+
+    #mkae df called data convert df to Solver,Node number,Time
+    df['Solver'] = df['Solver'].apply(lambda x: x)
+    df['Variation'] = df['Variation'].apply(lambda x: [x[0],x[2], x[3]])
+    df['Time'] = df['Time'].apply(lambda x: x)
+
     #save results to csv by time
     file_name = "results_" + str(min_nodes) + "_" + str(max_nodes) + "_" + str(num_variations) + ".csv"
     df.to_csv(file_name)
